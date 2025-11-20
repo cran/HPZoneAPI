@@ -1,12 +1,12 @@
-d48fe84a785525c8a1b8651f1bfbeff2 *DESCRIPTION
+ba78c5bc4da14bb35b02718ec91594e0 *DESCRIPTION
 0765002f0301548acb745cfec98be879 *LICENSE
 6e6872f1f92b7e3e6394651d59971871 *NAMESPACE
-c3087fb12de448880f736bafe2ef02a2 *NEWS.md
+a4c7a1061002a635f90909cc9c834f9b *NEWS.md
 bee2ec245c39a8c829002d168ee4a494 *R/HPZoneAPI-package.R
-36aea6e96934dadc921bc064ffd296f0 *R/HPZone_convert_dates.R
+67cf135c025a9d9226a3b5626b2d1e2d *R/HPZone_convert_dates.R
 89b89dd7d64b18a85dd0d97a0d00d40a *R/HPZone_make_valid.R
 0e903b4f37f36fb158e30db17d2b38fc *R/HPZone_necessary_scope.R
-dd3c77ee5cec353f4f067ac1f69838e6 *R/HPZone_request.R
+eeeea47f9993c76ccccb959c3a954b3c *R/HPZone_request.R
 35ce306f8fd5b5c518a4e45b8939a872 *R/HPZone_setup.R
 f9505148a228498fdf9b1a68fb205e11 *R/data.R
 a00d05d56a0caa950ccb6ca91efb8a8d *R/helpers.R
