@@ -8,7 +8,8 @@ HPZone_request_paginated(
   query,
   ...,
   n_max = 500,
-  scope = API_env$scope_standard
+  scope = API_env$scope_standard,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ HPZone_request_paginated(
 \item{n_max}{Maximum number of entries to request per call.}
 
 \item{scope}{The desired scope; either standard or extended.}
+
+\item{verbose}{Can be used to display information about the looping request.}
 }
 \value{
 A data frame containing all the responses gathered from the API. Only the items will be returned.
@@ -27,6 +30,7 @@ A data frame containing all the responses gathered from the API. Only the items 
 Convenience wrapper around [HPZone_request_query()]. This function automatically pulls the available number of records, rather than only the first 500.
 Note that the current maximum for batching is 500 rows, so increasing n_max is not recommended.
 This function is mainly intended for use when the query builder in [HPZone_request()] is insufficient. Usage of [HPZone_request()] is considerably easier otherwise.
+An order clause is automatically added if not present to account for the lack of proper automatic sorting in the API.
 }
 \examples{
 \dontrun{

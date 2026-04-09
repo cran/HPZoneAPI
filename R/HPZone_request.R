@@ -108,11 +108,13 @@ HPZone_request_query = function (query, ..., scope=API_env$scope_standard) {
 #' Convenience wrapper around [HPZone_request_query()]. This function automatically pulls the available number of records, rather than only the first 500.
 #' Note that the current maximum for batching is 500 rows, so increasing n_max is not recommended.
 #' This function is mainly intended for use when the query builder in [HPZone_request()] is insufficient. Usage of [HPZone_request()] is considerably easier otherwise.
+#' An order clause is automatically added if not present to account for the lack of proper automatic sorting in the API.
 #'
 #' @param query A GraphQL query to send to the HPZone API. Note that keywords 'skip' and 'take' cannot be present in the query; this function will add them.
 #' @param ... Parameters to be passed to sprintf(). If empty, the body is not passed through sprintf().
 #' @param n_max Maximum number of entries to request per call.
 #' @param scope The desired scope; either standard or extended.
+#' @param verbose Can be used to display information about the looping request.
 #'
 #' @return A data frame containing all the responses gathered from the API. Only the items will be returned.
 #' @export
@@ -141,15 +143,17 @@ HPZone_request_query = function (query, ..., scope=API_env$scope_standard) {
 #'    startdate, stringr::str_c(fields, collapse=", ")
 #' )
 #' }
-HPZone_request_paginated = function (query, ..., n_max=500, scope=API_env$scope_standard) {
+HPZone_request_paginated = function (query, ..., n_max=500, scope=API_env$scope_standard, verbose=FALSE) {
   check_setup()
 
   if (scope == "standard") scope = API_env$scope_standard
   if (scope == "extended") scope = API_env$scope_extended
 
   # find selector bracket, or lack thereof
-  pos = stringr::str_locate(query, "(?<=[a-zA-Z]{1,10})(\\(|\\{)")
-  query_char = stringr::str_sub(query, pos)
+  pos = stringr::str_locate(query, "(?<=[a-zA-Z]{1,10})\\s?(\\(|\\{)")
+  query_char = trimws(stringr::str_sub(query, pos))
+  # add order if lacking; required for successful pagination
+  order_graphql = ""
   if (query_char == "(") {
     # selector bracket; insert before other selectors
     selectors = stringr::str_sub(query, start=pos[,1]+1, end=stringr::str_locate(query, stringr::fixed(")"))[,1]-1)
@@ -157,10 +161,24 @@ HPZone_request_paginated = function (query, ..., n_max=500, scope=API_env$scope_
       stop("'skip' or 'take' were present in the query. This is not supported in this function. Please use HPZone_request_query() or HPZone_request_raw() instead.")
     }
 
-    query = paste0(stringr::str_sub(query, end=pos[,1]), "[pageblock], ", stringr::str_sub(query, start=pos[,1]+1))
+    if (!stringr::str_detect(selectors, "order")) {
+      # add order if not present; required for successful pagination
+      endpoint = stringr::str_sub(query, end=pos[1,1]-1)
+      order_field = ifelse(endpoint == "enquiries", HPZone_make_valid("enquiries", "Received on"), HPZone_make_valid(endpoint, "creation_date"))
+
+      order_graphql = paste0("order: [{ ", order_field, ": ASC }], ")
+    }
+
+    query = paste0(stringr::str_sub(query, end=pos[,1]), "[pageblock], ", order_graphql, stringr::str_sub(query, start=pos[,1]+1))
   } else if (query_char == "{") {
     # no selector bracket; insert
-    query = paste0(stringr::str_sub(query, end=pos[,1]-1), "([pageblock])", stringr::str_sub(query, start=pos[,1]))
+    # add order if not present; required for successful pagination
+    endpoint = stringr::str_sub(query, end=pos[1,1]-1)
+    order_field = ifelse(endpoint == "enquiries", HPZone_make_valid("enquiries", "Received on"), HPZone_make_valid(endpoint, "creation_date"))
+
+    order_graphql = paste0(", order: [{ ", order_field, ": ASC }]")
+
+    query = paste0(stringr::str_sub(query, end=pos[,1]-1), "([pageblock]", order_graphql, ")", stringr::str_sub(query, start=pos[,1]))
   } else {
     stop("No selector brackets nor opening curly brackets found. Make sure the query is properly formatted in GraphQL.")
   }
@@ -180,7 +198,9 @@ HPZone_request_paginated = function (query, ..., n_max=500, scope=API_env$scope_
   n_retrieved = 0
   n_present = Inf
   data_total = data.frame()
+  if (verbose) message("Executing the following query with scope ", scope, ": ", query)
   while (n_retrieved < n_present) {
+    if (verbose) message("Pulling up to ", n_max, " records, starting at index ", n_retrieved, " (expected number ", n_present, ")")
     data = HPZone_request_raw(paste0('{"query": "{', gsub('"', '\\\\"', sub("[pageblock]", paste0("take: ", n_max, ", skip: ", n_retrieved), query, fixed=T)) , '}"}'), scope=scope)
     # eliminate unnecessary listing; the format is something weird like data$cases$items
     while (length(data) == 1 && is.list(data)) {
@@ -348,7 +368,7 @@ HPZone_request = function (endpoint, fields, where=NA, order=NA, verbose=FALSE) 
   }
 
   if (verbose) message("Executing the following query with scope ", scope, ": ", query)
-  data = HPZone_request_paginated(query, scope=scope)
+  data = HPZone_request_paginated(query, scope=scope, verbose=verbose)
 
   return(data)
 }

@@ -1,12 +1,12 @@
-ba78c5bc4da14bb35b02718ec91594e0 *DESCRIPTION
+83c24b410e0d42baf04e45a3d2c1d7bf *DESCRIPTION
 0765002f0301548acb745cfec98be879 *LICENSE
 6e6872f1f92b7e3e6394651d59971871 *NAMESPACE
-a4c7a1061002a635f90909cc9c834f9b *NEWS.md
+a6f839fee925189fd2ae4fb2ed794b1a *NEWS.md
 bee2ec245c39a8c829002d168ee4a494 *R/HPZoneAPI-package.R
 67cf135c025a9d9226a3b5626b2d1e2d *R/HPZone_convert_dates.R
 89b89dd7d64b18a85dd0d97a0d00d40a *R/HPZone_make_valid.R
 0e903b4f37f36fb158e30db17d2b38fc *R/HPZone_necessary_scope.R
-eeeea47f9993c76ccccb959c3a954b3c *R/HPZone_request.R
+2606ccc1bf750ecd7bdc0856d9f6e188 *R/HPZone_request.R
 35ce306f8fd5b5c518a4e45b8939a872 *R/HPZone_setup.R
 f9505148a228498fdf9b1a68fb205e11 *R/data.R
 a00d05d56a0caa950ccb6ca91efb8a8d *R/helpers.R
@@ -19,7 +19,7 @@ be970b150dd578fa915baa0cc543e211 *man/HPZone_fields.Rd
 74c8692585699feb529c718a4a9b71cb *man/HPZone_make_valid.Rd
 b7dfb381df27849685bd0b052f896c68 *man/HPZone_necessary_scope.Rd
 bc62610074d0c363ce44158a93201afc *man/HPZone_request.Rd
-9ba558734ae09d8d327472cba33dc729 *man/HPZone_request_paginated.Rd
+2e337eff4ba12fda6687702c3d82b9d5 *man/HPZone_request_paginated.Rd
 00654d7f2ff6a1e01b73ea7675344dac *man/HPZone_request_query.Rd
 9605c51f5d66b1de2b07f2db21a5db20 *man/HPZone_request_raw.Rd
 31649ab8287d5b33329b6c1129d44f65 *man/HPZone_setup.Rd
